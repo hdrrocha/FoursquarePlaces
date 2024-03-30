@@ -51,19 +51,44 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    // Android Jetpack Libraries
+    implementation("androidx.core:core-ktx:1.9.0") // Kotlin Extensions for Android APIs
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2") // Android Lifecycle Components
+    implementation("androidx.activity:activity-compose:1.3.1") // Compose Integration with Activity
+    implementation(platform("androidx.compose:compose-bom:2023.03.00")) // Compose BOM (Bill of Materials)
+    implementation("androidx.compose.ui:ui") // Core Compose library
+    implementation("androidx.compose.ui:ui-graphics") // Compose Graphics Resources
+    implementation("androidx.compose.ui:ui-tooling-preview") // Compose Preview Tooling
+    implementation("androidx.compose.material3:material3") // Material Design 3 for Compose
+    implementation("androidx.compose.material:material:1.0.0") // Material Design Library for Compose
+    implementation("androidx.compose.ui:ui:1.0.0") // Core Compose library
+    implementation("androidx.compose.material:material-icons-core:1.0.0") // Material Design Icons for Compose
+    implementation("androidx.compose.material:material-icons-extended:1.0.0") // Extended Material Design Icons for Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7") // Compose Navigation Library
+    testImplementation("junit:junit:4.13.2") // JUnit Testing Framework for Java
+    androidTestImplementation("androidx.test.ext:junit:1.1.5") // JUnit Extension for Android Instrumentation Testing
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") // UI Testing Framework for Android
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00")) // Compose BOM for Instrumentation Testing
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4") // JUnit Tests for Compose UI
+    debugImplementation("androidx.compose.ui:ui-tooling") // Compose Development Tools
+    debugImplementation("androidx.compose.ui:ui-test-manifest") // Manifest for Compose Instrumentation Testing
+    debugImplementation("androidx.compose.runtime:runtime-livedata:1.0.5") // LiveData for Compose
+
+    // Glide for image loading
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.github.bumptech.glide:compiler:4.12.0")
+
+    // Retrofit for network communication
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    // Moshi for JSON processing
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+
+    // Koin for dependency injection
+    implementation("io.insert-koin:koin-android:3.5.3")
+    implementation("io.insert-koin:koin-androidx-compose:3.5.0")
+
 }
