@@ -2,12 +2,19 @@ package com.example.foursquareplaces.injection
 
 import com.example.foursquareplaces.BuildConfig
 import com.example.foursquareplaces.data.api.FoursquareApi
+import com.example.foursquareplaces.data.repository.PlaceDetailsRepositoryImp
 import com.example.foursquareplaces.data.repository.SearchPlacesRepositoryImp
+import com.example.foursquareplaces.domain.mapper.PlaceDetailsMapperImp
 import com.example.foursquareplaces.domain.mapper.SearchPlacesMapperImp
+import com.example.foursquareplaces.domain.mapper.abs.PlaceDetailsMapper
 import com.example.foursquareplaces.domain.mapper.abs.SearchPlacesMapper
+import com.example.foursquareplaces.domain.repository.PlaceDetailsRepository
 import com.example.foursquareplaces.domain.repository.SearchPlacesRepository
+import com.example.foursquareplaces.domain.usecase.PlaceDetailsUseCaseImp
 import com.example.foursquareplaces.domain.usecase.SearchPlacesUseCaseImp
+import com.example.foursquareplaces.domain.usecase.abs.PlaceDetailsUseCase
 import com.example.foursquareplaces.domain.usecase.abs.SearchPlacesUseCase
+import com.example.foursquareplaces.ui.itemdetailscreen.viewmodel.PlaceDetailsViewModel
 import com.example.foursquareplaces.ui.searchplaces.viewmodel.SearchPlacesViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -45,17 +52,29 @@ object Modules {
         single<SearchPlacesRepository> {
             SearchPlacesRepositoryImp(api = get())
         }
+        single<PlaceDetailsRepository> {
+            PlaceDetailsRepositoryImp(api = get())
+        }
     }
 
     private val mapper = module {
         single<SearchPlacesMapper> {
             SearchPlacesMapperImp()
         }
+        single<PlaceDetailsMapper> {
+            PlaceDetailsMapperImp()
+        }
     }
 
     private val useCase = module {
         single<SearchPlacesUseCase> {
             SearchPlacesUseCaseImp(
+                mapper = get(),
+                repository = get()
+            )
+        }
+        single<PlaceDetailsUseCase> {
+            PlaceDetailsUseCaseImp(
                 mapper = get(),
                 repository = get()
             )
@@ -68,9 +87,13 @@ object Modules {
                 useCase = get()
             )
         }
+        viewModel {
+            PlaceDetailsViewModel(
+                useCase = get()
+            )
+        }
 
     }
-
 
     var all = listOf(
         network,

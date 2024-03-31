@@ -20,6 +20,7 @@ android {
         buildConfigField("String", "BASE_URL", "\"https://api.foursquare.com/v3/\"")
         buildConfigField("String", "AUTH_TOKEN", "\"fsq3ow/gIdM/fNWUagLZyT3WwnM0vVzh6Zcvzy+ADDQ2JLo=\"")
         buildConfigField("String", "SEARCH_FIELDS", "\"name,price,distance,rating,location,photos,fsq_id\"")
+        buildConfigField("String", "DETAILS_FIELDS", "\"name,categories,price,rating,distance,tel,location,hours,photos,tips\"")
         buildConfigField("String", "CLIENT_ID", "\"1YM3HHS4WK5OCUGHFXDNV0AD4PSPV0ODDZSGII4J0IXIZT4V\"")
         buildConfigField("String", "CLIENT_SECRET", "\"03E0MTZ5OK4RETVJP332C3Q3H2ELSHFH4XKCVAH3HZCKKCWC\"")
         buildConfigField("String", "VERSION_API", "\"20240126\"")

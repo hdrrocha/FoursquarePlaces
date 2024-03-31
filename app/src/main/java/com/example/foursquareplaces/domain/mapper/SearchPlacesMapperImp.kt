@@ -1,6 +1,5 @@
 package com.example.foursquareplaces.domain.mapper
 
-import android.util.Log
 import com.example.foursquareplaces.data.model.Location
 import com.example.foursquareplaces.data.model.Photo
 import com.example.foursquareplaces.data.model.Place
@@ -10,7 +9,6 @@ import com.example.foursquareplaces.domain.uimodel.LocationUI
 import com.example.foursquareplaces.domain.uimodel.PhotoUI
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
 import com.example.foursquareplaces.domain.uimodel.SearchResponseUI
-import com.example.foursquareplaces.utils.fixImageUrl
 import retrofit2.Response
 
 class SearchPlacesMapperImp: SearchPlacesMapper {
@@ -36,8 +34,7 @@ class SearchPlacesMapperImp: SearchPlacesMapper {
                 categories = emptyList(),
                 hours = null,
                 tel = null,
-                tips = emptyList(),
-                profilePhotoUrl = profilePhotoUrl(place.photos)
+                tips = emptyList()
             )
         }
     }
