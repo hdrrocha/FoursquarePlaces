@@ -27,16 +27,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val searchPlacesViewModel: SearchPlacesViewModel = getViewModel()
             FoursquarePlacesTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-
                     NavHost(navController, startDestination = "main_screen") {
                         composable("main_screen") {
-                            SearchPlacesView( navController = navController)
+                            SearchPlacesView(searchPlacesViewModel, navController = navController)
                         }
                         composable(
                             "item_detail_screen/{itemName}",

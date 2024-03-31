@@ -2,10 +2,13 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
-
 android {
     namespace = "com.example.foursquareplaces"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.example.foursquareplaces"
@@ -13,6 +16,13 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "BASE_URL", "\"https://api.foursquare.com/v3/\"")
+        buildConfigField("String", "AUTH_TOKEN", "\"fsq3ow/gIdM/fNWUagLZyT3WwnM0vVzh6Zcvzy+ADDQ2JLo=\"")
+        buildConfigField("String", "SEARCH_FIELDS", "\"name,price,distance,rating,location,photos,fsq_id\"")
+        buildConfigField("String", "CLIENT_ID", "\"1YM3HHS4WK5OCUGHFXDNV0AD4PSPV0ODDZSGII4J0IXIZT4V\"")
+        buildConfigField("String", "CLIENT_SECRET", "\"03E0MTZ5OK4RETVJP332C3Q3H2ELSHFH4XKCVAH3HZCKKCWC\"")
+        buildConfigField("String", "VERSION_API", "\"20240126\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -27,6 +37,26 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+    flavorDimensions("version")
+    productFlavors {
+        create("coffee") {
+            dimension = "version"
+            applicationId = "com.example.foursquarecoffeeplaces"
+            versionCode = 1
+            versionName = "1.0.0"
+            buildConfigField("String", "FLAVOR_SELECTED", "\"coffee\"")
+            buildConfigField("String", "RADIUS", "\"1000\"")
+        }
+
+        create("drinks") {
+            dimension = "version"
+            applicationId = "com.example.foursquaredrinksplaces"
+            versionCode = 1
+            versionName = "1.0.0"
+            buildConfigField("String", "FLAVOR_SELECTED", "\"drink\"")
+            buildConfigField("String", "RADIUS", "\"3000\"")
         }
     }
     compileOptions {
@@ -48,6 +78,7 @@ android {
         }
     }
 }
+
 
 dependencies {
 
