@@ -16,6 +16,7 @@ import com.example.foursquareplaces.domain.usecase.abs.PlaceDetailsUseCase
 import com.example.foursquareplaces.domain.usecase.abs.SearchPlacesUseCase
 import com.example.foursquareplaces.ui.itemdetailscreen.viewmodel.PlaceDetailsViewModel
 import com.example.foursquareplaces.ui.searchplaces.viewmodel.SearchPlacesViewModel
+import com.example.foursquareplaces.utils.MyLocationManager
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -81,10 +82,15 @@ object Modules {
         }
     }
 
+    private val servicesManager = module {
+        single { MyLocationManager(context = get()) }
+
+    }
     private val viewModel = module {
         viewModel {
             SearchPlacesViewModel(
-                useCase = get()
+                useCase = get(),
+                locationManager = get()
             )
         }
         viewModel {
@@ -97,6 +103,7 @@ object Modules {
 
     var all = listOf(
         network,
+        servicesManager,
         api,
         repository,
         mapper,

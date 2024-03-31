@@ -97,6 +97,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:1.0.0") // Material Design Icons for Compose
     implementation("androidx.compose.material:material-icons-extended:1.0.0") // Extended Material Design Icons for Compose
     implementation("androidx.navigation:navigation-compose:2.7.7") // Compose Navigation Library
+    implementation("com.google.android.gms:play-services-location:21.2.0")
     testImplementation("junit:junit:4.13.2") // JUnit Testing Framework for Java
     androidTestImplementation("androidx.test.ext:junit:1.1.5") // JUnit Extension for Android Instrumentation Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") // UI Testing Framework for Android

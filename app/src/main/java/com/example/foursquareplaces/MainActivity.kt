@@ -1,5 +1,4 @@
 package com.example.foursquareplaces
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,12 +19,12 @@ import com.example.foursquareplaces.ui.theme.FoursquarePlacesTheme
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val searchPlacesViewModel: SearchPlacesViewModel = getViewModel()
             val placeDetailsViewModel: PlaceDetailsViewModel = getViewModel()
-
             FoursquarePlacesTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
