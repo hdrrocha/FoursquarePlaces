@@ -8,17 +8,23 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="primary_text_color_light">#000000</color>
-    <color name="primary_text_color_dark">#FFFFFF</color>
+    <color name="primary_text_color_light">#FFFFFF</color>
+    <color name="primary_text_color_dark">#000000</color>
 
-    <color name="secondary_text_color_light">#808080</color>
-    <color name="secondary_text_color_dark">#CCCCCC</color>
+    <color name="secondary_text_color_light">#CCCCCC</color>
+    <color name="secondary_text_color_dark">#808080</color>
 
     <color name="nav_bar_color">#FFFFFFFF</color>
 
     <color name="nav_bar_title_color">#000000</color>
 
     <color name="background_color">#FFFFFF</color>
+    <color name="background_card_color">#FFFFFF</color>
+    <color name="background_card_top_light">#00B9D7</color>
+    <color name="background_card_top_mid">#45D9F1</color>
+    <color name="background_card_top_dark">#4B30ED</color>
+
+    <color name="background_button_dark">#4B30ED</color>
 
 
 </resources>

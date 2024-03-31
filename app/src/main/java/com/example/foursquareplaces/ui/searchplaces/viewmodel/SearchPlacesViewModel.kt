@@ -1,6 +1,5 @@
 package com.example.foursquareplaces.ui.searchplaces.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
@@ -26,17 +25,10 @@ class SearchPlacesViewModel (
             if (searchResponseUI != null) {
                 _placesList.value = searchResponseUI
             }
-            searchResponseUI?.forEach {
-                if (it != null) {
-                    Log.i("Helder fsq_id", it.fsq_id)
-                    Log.i("Helder name", it.name)
-                }
-            }
             loading.value = false
         }
     }
     fun filterPlaces(minPrice: String?, openNow: Boolean?) {
-        Log.i("Helder","minPrice: ${minPrice?.length}, openNow:${openNow}?" )
         loading.value = true
         viewModelScope.launch {
 
@@ -51,7 +43,5 @@ class SearchPlacesViewModel (
             }
             loading.value = false
         }
-
     }
-
 }

@@ -1,11 +1,10 @@
 package com.example.foursquareplaces.ui.searchplaces.view
 
-
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
@@ -15,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -30,14 +30,15 @@ import androidx.navigation.NavController
 import com.example.foursquareplaces.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -91,12 +92,11 @@ fun SearchPlacesView(viewModel: SearchPlacesViewModel, navController: NavControl
                     }
                 )
                 if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+                    CircularProgressIndicator(modifier = Modifier.size(50.dp).align(Alignment.CenterHorizontally))
                 } else {
                     LazyVerticalGrid(GridCells.Fixed(2)) {
                         items(placesList) { place ->
                             ItemPlace(place = place) { itemName ->
-                                // Navegar para a tela de detalhes passando o nome do item clicado
                                 navController.navigate("item_detail_screen/$itemName")
                             }
                         }
@@ -114,7 +114,7 @@ fun Toolbar() {
                 text = stringResource(id = R.string.app_name),
                 fontSize = 22.sp,
                 color = colorResource(id = R.color.nav_bar_title_color),
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
         },
@@ -129,13 +129,12 @@ fun FilterMenu(
     onToggleStateChanged: (Boolean) -> Unit,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("Valor") } // Estado para controlar o texto exibido
-    var isOpenNow by remember { mutableStateOf(false) } // Estado para controlar o estado do Switch
+    var selectedText by remember { mutableStateOf("Valor") }
+    var isOpenNow by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose { }
     }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,11 +144,16 @@ fun FilterMenu(
         Box(
             modifier = Modifier
                 .clickable { isMenuExpanded = !isMenuExpanded }
-                .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp))
-                .padding(8.dp)
+                .background(
+                    color = colorResource(id = R.color.background_button_dark),
+                    shape = RoundedCornerShape(25.dp)
+                )
+                .padding(4.dp)
         ) {
             Text(
                 text = selectedText,
+                style = MaterialTheme.typography.caption,
+                color = colorResource(id = R.color.primary_text_color_light),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
@@ -187,17 +191,17 @@ fun FilterMenu(
                 Text(text = "Very Expensive")
             }
         }
-
-        // Adicionando o Switch para o filtro "Abertos"
         Spacer(modifier = Modifier.width(8.dp))
-        Column(
-            modifier = Modifier.align(Alignment.CenterVertically)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (isOpenNow) "Aberto" else "Fechado",
-                color = Color.Black,
+                text = if (isOpenNow) stringResource(id = R.string.open) else stringResource(id = R.string.closed),
+                color = colorResource(id = R.color.primary_text_color_dark),
+                style = MaterialTheme.typography.caption,
                 fontSize = 14.sp
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Switch(
                 checked = isOpenNow,
                 onCheckedChange = { isChecked ->
@@ -206,37 +210,39 @@ fun FilterMenu(
                 }
             )
         }
+
     }
 }
-
 @Composable
 fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         elevation = 4.dp,
-        modifier = Modifier.padding(8.dp)
+        border = null,
+        modifier = Modifier.padding(4.dp)
     ) {
         Box(
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier
+                .height(250.dp)
+                .background(colorResource(id = R.color.background_card_color))
+                .clickable { onItemClick(place.fsq_id) }
         ) {
-            // Exibir a primeira foto não vazia
-            place.photos?.firstOrNull { "${it.prefix}${it.suffix}".isNotEmpty() }?.let { photo ->
-                var photoUrl = "${photo.prefix}1024${photo.suffix}".fixImageUrl()
-                GlideImage(url = photoUrl)
-            }
-            // Gradiente sobre a imagem
-            Box(
+            Column(
                 modifier = Modifier
-                    .clickable { onItemClick(place.fsq_id) }
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color(0xAA000000), Color(0x00000000)),
-                            startY = 1f,
-                            endY = 0f
-                        )
-                    )
-            )
+                    .fillMaxWidth()
+                    .height(125.dp)
+                    .background(colorResource(id = R.color.background_card_top_dark)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+                place.photos
+                    ?.firstOrNull { "${it.prefix}${it.suffix}".isNotEmpty() }
+                    ?.let { photo ->
+                        val photoUrl = "${photo.prefix}1024${photo.suffix}".fixImageUrl()
+                        ItemPlaceImage(url = photoUrl)
+                    }
+            }
+            Spacer(modifier = Modifier.height(26.dp))
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -246,50 +252,55 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
             ) {
                 Text(
                     text = place.name,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.h6,
+                    color = colorResource(id = R.color.primary_text_color_dark),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .align(Alignment.CenterHorizontally)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = place.distance,
+                        style = MaterialTheme.typography.body1,
+                        color = colorResource(id = R.color.secondary_text_color_dark),
+                    )
+                    Text(
+                        text = place.price,
+                        style = MaterialTheme.typography.body1,
+                        color = colorResource(id = R.color.secondary_text_color_dark),
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Rating",
-                        tint = Color.White,
+                        tint =colorResource(id = R.color.secondary_text_color_dark),
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
                         text = place.rating,
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                    Text(
-                        text = place.distance,
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        style = MaterialTheme.typography.body1,
+                        color = colorResource(id = R.color.secondary_text_color_dark),
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                 }
-                Text(
-                    text = place.price.toString(),
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
         }
     }
 }
-
-
 @Composable
-private fun GlideImage(url: String) {
+private fun ItemPlaceImage(url: String) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
@@ -301,7 +312,7 @@ private fun GlideImage(url: String) {
                         .asBitmap()
                         .load(url)
                         .placeholder(R.drawable.error_image)
-                        .error(R.drawable.error_image) // Definir a imagem de erro
+                        .error(R.drawable.error_image)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .submit()
                         .get()
@@ -313,11 +324,18 @@ private fun GlideImage(url: String) {
         }
     }
     imageBitmap.value?.let { img ->
-        Image(
-            bitmap = img,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        Surface(
+            shape = RoundedCornerShape(110.dp),
+            elevation = 4.dp,
+            border = null,
+            modifier = Modifier.size(100.dp)
+        ){
+            Image(
+                bitmap = img,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
     }
 }

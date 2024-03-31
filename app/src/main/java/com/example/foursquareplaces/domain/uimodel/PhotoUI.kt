@@ -6,5 +6,5 @@ data class PhotoUI(
     val prefix: String,
     val suffix: String,
     val width: Int,
-    val height: Int,
+    val height: Int
 )

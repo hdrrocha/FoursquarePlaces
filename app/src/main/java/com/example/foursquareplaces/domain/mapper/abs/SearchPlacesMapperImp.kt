@@ -1,13 +1,16 @@
-package com.example.foursquareplaces.domain.mapper.abs
+package com.example.foursquareplaces.domain.mapper
 
+import android.util.Log
 import com.example.foursquareplaces.data.model.Location
 import com.example.foursquareplaces.data.model.Photo
 import com.example.foursquareplaces.data.model.Place
 import com.example.foursquareplaces.data.model.SearchResponse
+import com.example.foursquareplaces.domain.mapper.abs.SearchPlacesMapper
 import com.example.foursquareplaces.domain.uimodel.LocationUI
 import com.example.foursquareplaces.domain.uimodel.PhotoUI
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
 import com.example.foursquareplaces.domain.uimodel.SearchResponseUI
+import com.example.foursquareplaces.utils.fixImageUrl
 import retrofit2.Response
 
 class SearchPlacesMapperImp: SearchPlacesMapper {
@@ -33,10 +36,16 @@ class SearchPlacesMapperImp: SearchPlacesMapper {
                 categories = emptyList(),
                 hours = null,
                 tel = null,
-                tips = emptyList()
+                tips = emptyList(),
+                profilePhotoUrl = profilePhotoUrl(place.photos)
             )
         }
     }
+
+    private fun profilePhotoUrl(photos: List<Photo>) = photos.firstOrNull { "${it.prefix}${it.suffix}".isNotEmpty() }?.run {
+        "${this.prefix}1024${this.suffix}"
+    } ?: ""
+
 
     private fun mapLocationUI(location: Location?): LocationUI {
         return LocationUI(
@@ -52,7 +61,7 @@ class SearchPlacesMapperImp: SearchPlacesMapper {
             prefix = photo.prefix ?: "",
             suffix = photo.suffix ?: "",
             width = photo.width ?: 0,
-            height = photo.height ?: 0,
+            height = photo.height ?: 0
         )
     }
     private fun formatPrice(price: Int): String {

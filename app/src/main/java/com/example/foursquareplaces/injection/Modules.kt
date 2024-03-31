@@ -3,8 +3,8 @@ package com.example.foursquareplaces.injection
 import com.example.foursquareplaces.BuildConfig
 import com.example.foursquareplaces.data.api.FoursquareApi
 import com.example.foursquareplaces.data.repository.SearchPlacesRepositoryImp
+import com.example.foursquareplaces.domain.mapper.SearchPlacesMapperImp
 import com.example.foursquareplaces.domain.mapper.abs.SearchPlacesMapper
-import com.example.foursquareplaces.domain.mapper.abs.SearchPlacesMapperImp
 import com.example.foursquareplaces.domain.repository.SearchPlacesRepository
 import com.example.foursquareplaces.domain.usecase.SearchPlacesUseCaseImp
 import com.example.foursquareplaces.domain.usecase.abs.SearchPlacesUseCase
