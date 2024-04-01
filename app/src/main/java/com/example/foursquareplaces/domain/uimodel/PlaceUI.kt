@@ -13,5 +13,4 @@ data class PlaceUI(
     val hours: HoursUI?,
     val tel: String,
     val tips: List<TipUI>?,
-
     )

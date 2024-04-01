@@ -20,6 +20,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -52,9 +53,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.example.foursquareplaces.R
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
 import com.example.foursquareplaces.domain.uimodel.TipUI
+import com.example.foursquareplaces.ui.components.PlaceDivider
 import com.example.foursquareplaces.ui.components.PlaceRoundImage
+import com.example.foursquareplaces.ui.components.PlaceText
+import com.example.foursquareplaces.ui.components.PlaceTextSubTitle
+import com.example.foursquareplaces.ui.components.PlateTextError
+import com.example.foursquareplaces.ui.components.PlateTextTitle
 import com.example.foursquareplaces.ui.itemdetailscreen.viewmodel.PlaceDetailsViewModel
 import com.example.foursquareplaces.utils.fixImageUrl
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -64,10 +71,16 @@ fun ItemDetailScreen(viewModel: PlaceDetailsViewModel, fsqId: String, onBackPres
     }
     val place by viewModel.place.collectAsState(null)
     var isLoading by remember { mutableStateOf(true) }
+    var isError by remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel) {
         viewModel.loading.collect { loading ->
             isLoading = loading
+        }
+    }
+    LaunchedEffect(viewModel) {
+        viewModel.error.collect { error ->
+            isError = error
         }
     }
     Scaffold(
@@ -89,7 +102,12 @@ fun ItemDetailScreen(viewModel: PlaceDetailsViewModel, fsqId: String, onBackPres
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.fillMaxSize())
             } else {
-                place?.let { it1 -> DetailContent(placeInfo = it1) }
+                if (!isError)
+                    place?.let { it1 -> DetailContent(placeInfo = it1) }
+                else
+                    PlateTextError(text = stringResource(id = R.string.error_default),
+                        modifier = Modifier
+                            .padding(horizontal = 1.dp))
             }
         }
     )
@@ -104,14 +122,12 @@ private fun DetailContent(placeInfo: PlaceUI) {
         Column(
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .padding(16.dp)
                 .background(colorResource(id = R.color.background_color))
                 .align(Alignment.BottomStart)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .fillMaxWidth().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 placeInfo.photos.firstOrNull()?.let { "${it.prefix}1024${it.suffix}".fixImageUrl() ?: "" }
@@ -119,96 +135,63 @@ private fun DetailContent(placeInfo: PlaceUI) {
                         PlaceRoundImage(url = it, Modifier.size(200.dp))
                     }
             }
-
-            Text(
-                text = placeInfo.name,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.h4,
-                color = colorResource(id = R.color.primary_text_color_dark),
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-            placeInfo?.categories?.forEach { category ->
-                Text(
-                    text = category.name,
-                    style = MaterialTheme.typography.h5,
-                    color = colorResource(id = R.color.secondary_text_color_dark),
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+            PlateTextTitle(text = placeInfo.name,modifier = Modifier.fillMaxWidth())
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                ) {
+                    placeInfo?.categories?.forEach { category ->
+                        PlaceText(  text = category.name,modifier = Modifier
+                            .padding(horizontal = 4.dp) )
+                    }
+                }
             }
 
-            Text(
-                text = placeInfo.location.address,
-                style = MaterialTheme.typography.h6,
-                color = colorResource(id = R.color.secondary_text_color_dark),
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
 
-            Text(
-                text = placeInfo.tel,
-                style = MaterialTheme.typography.h6,
-                color = colorResource(id = R.color.secondary_text_color_dark),
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 2.dp)
-            ) {
-                Text(
-                    text = placeInfo.price,
-                    style = MaterialTheme.typography.h6,
-                    color = colorResource(id = R.color.secondary_text_color_dark),
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                )
+            PlaceText(  text =placeInfo.location.address,modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .align(Alignment.CenterHorizontally) )
 
-                Text(
-                    text = if (placeInfo.hours?.openNow == true)stringResource(id = R.string.open) else stringResource(id = R.string.closed),
-                    style = MaterialTheme.typography.h6,
-                    color = colorResource(id = R.color.secondary_text_color_dark),
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                )
+            PlaceText(  text =placeInfo.tel,modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .align(Alignment.CenterHorizontally) )
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 2.dp)
+                ) {
+                    PlaceText(  text =placeInfo.price,modifier = Modifier
+                        .padding(horizontal = 4.dp))
 
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Rating",
-                    tint = colorResource(id = R.color.secondary_text_color_dark),
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = placeInfo.rating,
-                    style = MaterialTheme.typography.h6,
-                    color = colorResource(id = R.color.secondary_text_color_dark),
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                )
+                    PlaceText(  text = if (placeInfo.hours?.openNow == true)stringResource(id = R.string.open) else stringResource(id = R.string.closed),modifier = Modifier
+                        .padding(horizontal = 4.dp))
+
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Rating",
+                        tint = colorResource(id = R.color.secondary_text_color_dark),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    PlaceText(  text =placeInfo.rating,modifier = Modifier)
+                }
             }
 
-            Text(
-                text = stringResource(id = R.string.image_gallery) ,
-                style = MaterialTheme.typography.h5,
-                color = colorResource(id = R.color.primary_text_color_dark),
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-            )
+            PlaceTextSubTitle(text = stringResource(id = R.string.image_gallery),modifier = Modifier
+                .padding(horizontal = 4.dp))
+            PlaceDivider()
             GalleryCarousel(images = placeInfo.photos.map { "${it.prefix}1024${it.suffix}".fixImageUrl() })
-            Text(
-                text = stringResource(id = R.string.customer_reviews),
-                style = MaterialTheme.typography.h5,
-                color = colorResource(id = R.color.primary_text_color_dark),
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-            )
+
+            PlaceTextSubTitle(text = stringResource(id = R.string.customer_reviews),modifier = Modifier
+                .padding(horizontal = 8.dp))
+            PlaceDivider()
             placeInfo.tips?.let { CustomerReviewCarousel(it) }
         }
     }
@@ -219,28 +202,12 @@ private fun GalleryCarousel(images: List<String>) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     LazyRow(
         modifier = Modifier
-            .padding(top = 16.dp)
-            .height(screenWidth)
+            .height(280.dp)
             .fillMaxWidth()
     ) {
         items(images ?: emptyList()) { photo ->
             val photoUrl = photo
             ImageGalleryItem(url = photoUrl)
-        }
-    }
-}
-
-@Composable
-private fun CustomerReviewCarousel(tips: List<TipUI>) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    LazyColumn(
-        modifier = Modifier
-            .height(screenWidth)
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        items(tips) { tip ->
-            CustomerReviewItem(tip = tip)
         }
     }
 }
@@ -260,40 +227,61 @@ fun HeartButton() {
     }
 }
 @Composable
-private fun GlideImage(url: String, modifier: Modifier) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
-
-    LaunchedEffect(url) {
-        coroutineScope.launch {
-            try {
-                val bitmap = withContext(Dispatchers.IO) {
-                    Glide.with(context)
-                        .asBitmap()
-                        .load(url)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .submit()
-                        .get()
-                }
-                imageBitmap.value = bitmap.asImageBitmap()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+private fun CustomerReviewCarousel(tips: List<TipUI>) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    LazyColumn(
+        modifier = Modifier
+            .height(screenWidth)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        items(tips) { tip ->
+            CustomerReviewItem(tip = tip)
         }
     }
+}
+@Composable
+fun ImageCarousel(images: List<String>) {
+    val selectedImageIndex = remember { mutableStateOf(0) }
 
-    Box(
-        modifier = modifier
+    LazyRow(
+        modifier = Modifier
+            .padding(vertical = 16.dp)
+            .fillMaxWidth()
     ) {
-        imageBitmap.value?.let { img ->
-            Image(
-                bitmap = img,
-                contentDescription = "Category Image",
+        items(images.size) { index ->
+            val isSelected = index == selectedImageIndex.value
+            ImageGalleryItem(
+                imageUrl = images[index],
+                isSelected = isSelected,
+                onImageClicked = { selectedImageIndex.value = index }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ImageGalleryItem(
+    imageUrl: String,
+    isSelected: Boolean,
+    onImageClicked: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+            .height(140.dp)
+            .width(240.dp)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(colorResource(id = R.color.background_color))
+            .clickable { onImageClicked() }
+    ) {
+        if (isSelected) {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black),
-                contentScale = ContentScale.Crop
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(color = Color.Blue)
             )
         }
     }
@@ -326,6 +314,7 @@ private fun ImageGalleryItem(url: String) {
         modifier = Modifier
             .padding(top = 16.dp)
             .fillMaxWidth()
+            .height(220.dp)
             .aspectRatio(1f)
             .clip(shape = RoundedCornerShape(10.dp))
             .background(colorResource(id = R.color.background_color))
@@ -335,8 +324,10 @@ private fun ImageGalleryItem(url: String) {
             Image(
                 bitmap = img,
                 contentDescription = "Category Image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(4.dp),
+                contentScale = ContentScale.FillBounds
             )
         }
     }
@@ -346,25 +337,28 @@ private fun CustomerReviewItem(tip: TipUI) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .background(colorResource(id = R.color.background_card_color)),
         elevation = 4.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+                .background(colorResource(id = R.color.background_card_color))
         ) {
-            Text(
-                text = tip.text,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Text(
-                text = "Date: ${tip.createdAt}",
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray
-            )
+            Row ( modifier = Modifier
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp)
+                .align(Alignment.CenterHorizontally)) {
+                PlaceText(  text =tip.text,modifier = Modifier)
+            }
+            Row ( modifier = Modifier
+                .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 16.dp)
+
+                .align(Alignment.CenterHorizontally)) {
+                PlaceText( text =tip.createdAt,modifier = Modifier)
+            }
+
+
         }
     }
 }

@@ -42,6 +42,8 @@ class SearchPlacesViewModel (
                         stopLocationUpdates()
                         if (searchResponseUI != null) {
                             _placesList.value = searchResponseUI
+                        } else {
+                            error.value = true
                         }
                         loading.value = false
                     }

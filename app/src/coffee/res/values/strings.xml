@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FoursquareCoffeePlaces</string>
+    <string name="app_name">Coffee</string>
     <string name="information_app">Coffee place details</string>
     <string name="open">Open</string>
     <string name="closed">Closed</string>
@@ -11,5 +11,6 @@
     <string name="very_expensive">Very Expensive</string>
     <string name="rice_range">"Price Range</string>
     <string name="order_by">"Order by</string>
+    <string name="error_default">We cannot load places now =(</string>
 
 </resources>

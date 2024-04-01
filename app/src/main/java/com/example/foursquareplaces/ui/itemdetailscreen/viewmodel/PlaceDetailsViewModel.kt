@@ -20,6 +20,8 @@ class PlaceDetailsViewModel (
             val placeDetail = useCase.placeDetails(fsqId)
             if (placeDetail != null) {
                 _place.value = placeDetail
+            } else {
+                error.value = true
             }
             loading.value = false
         }

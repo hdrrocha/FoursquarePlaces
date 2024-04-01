@@ -59,9 +59,9 @@ class PlaceDetailsMapperImp: PlaceDetailsMapper {
     }
     private fun mapLocationUI(location: Location?): LocationUI {
         return LocationUI(
-            address = location?.address ?: "",
-            addressExtended = location?.address_extended ?: "",
-            formattedAddress = location?.formatted_address ?: ""
+            address = location?.address ?: "Address not provided",
+            addressExtended = location?.address_extended ?: "Address not provided",
+            formattedAddress = location?.formatted_address ?: "Address not provided"
         )
     }
     private fun mapPhotoUI(photo: Photo): PhotoUI {
@@ -80,14 +80,14 @@ class PlaceDetailsMapperImp: PlaceDetailsMapper {
                 fsq_id = place?.fsq_id ?: "",
                 distance = " • ${place?.distance}km"  ?:"• 0km",
                 location = mapLocationUI(place?.location),
-                name = place?.name ?: "",
+                name = place?.name ?: "Address not provided",
                 photos = place?.photos?.map { mapPhotoUI(it) } ?: emptyList(),
                 price = formatPrice(place?.price ?: 0),
                 rating = place?.rating.toString() ?: "0.0",
                 open_now = place?.open_now ?: false,
                 categories = place?.categories?.map { mapCategory(it) } ?: emptyList(),
                 hours = mapHours(place?.hours),
-                tel = place?.tel ?: ""  ,
+                tel = place?.tel ?: "Telephone not provided"  ,
                 tips = place?.tips?.map { mapTip(it) }
             )
         }

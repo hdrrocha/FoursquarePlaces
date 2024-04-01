@@ -33,6 +33,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
 import com.example.foursquareplaces.ui.components.PlaceRoundImage
+import com.example.foursquareplaces.ui.components.PlaceText
+import com.example.foursquareplaces.ui.components.PlateTextError
+import com.example.foursquareplaces.ui.components.PlateTextTitle
 import com.example.foursquareplaces.ui.searchplaces.viewmodel.SearchPlacesViewModel
 import com.example.foursquareplaces.utils.fixImageUrl
 
@@ -47,7 +50,7 @@ fun SearchPlacesView(viewModel: SearchPlacesViewModel, navController: NavControl
     var isLoading by remember { mutableStateOf(true) }
     var selectedPriceOption by remember { mutableStateOf("$$") }
     var isOpenNow by remember { mutableStateOf(false) }
-
+    var isError by remember { mutableStateOf(false) }
     LaunchedEffect(viewModel) {
         viewModel.placesList.collect { list ->
             placesList = list ?: emptyList()
@@ -58,11 +61,16 @@ fun SearchPlacesView(viewModel: SearchPlacesViewModel, navController: NavControl
             isLoading = loading
         }
     }
-
+    LaunchedEffect(viewModel) {
+        viewModel.error.collect { error ->
+            isError = error
+        }
+    }
     Scaffold(
         topBar = {
             Toolbar()
         },
+
         backgroundColor = colorResource(id = R.color.background_color),
         content = {
             Column {
@@ -77,19 +85,23 @@ fun SearchPlacesView(viewModel: SearchPlacesViewModel, navController: NavControl
                         viewModel.filterPlaces(selectedPriceOption.takeIf { it.isNotEmpty() }, isChecked)
                     }
                 )
-                if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier
-                        .size(50.dp)
-                        .align(Alignment.CenterHorizontally))
-                } else {
-                    LazyVerticalGrid(GridCells.Fixed(2)) {
-                        items(placesList) { place ->
-                            ItemPlace(place = place) { fsqId ->
-                                navController.navigate("item_detail_screen/$fsqId")
+                if(!isError)
+                    if (isLoading)
+                        CircularProgressIndicator(modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally))
+                    else
+                        LazyVerticalGrid(GridCells.Fixed(2), modifier = Modifier.padding(8.dp)) {
+                            items(placesList) { place ->
+                                ItemPlace(place = place) { fsqId ->
+                                    navController.navigate("item_detail_screen/$fsqId")
+                                }
                             }
                         }
-                    }
-                }
+                else
+                    PlateTextError(text = stringResource(id = R.string.error_default),
+                        modifier = Modifier
+                            .padding(horizontal = 1.dp))
             }
         }
     )
@@ -238,16 +250,11 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.Start
             ) {
-                Text(
-                    text = place.name,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.h6,
-                    color = colorResource(id = R.color.primary_text_color_dark),
+                PlateTextTitle(text = place.name,
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                    .padding(horizontal = 4.dp)
+                    .align(Alignment.CenterHorizontally))
+
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -255,17 +262,9 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    Text(
-                        text = place.distance,
-                        style = MaterialTheme.typography.body1,
-                        color = colorResource(id = R.color.secondary_text_color_dark),
-                    )
-                    Text(
-                        text = place.price,
-                        style = MaterialTheme.typography.body1,
-                        color = colorResource(id = R.color.secondary_text_color_dark),
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    )
+                    PlaceText(  text = place.price,modifier = Modifier
+                        .padding(horizontal = 4.dp) )
+                    PlaceText(  text = place.distance,modifier = Modifier.padding(horizontal = 4.dp) )
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
@@ -275,12 +274,7 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
                         tint =colorResource(id = R.color.secondary_text_color_dark),
                         modifier = Modifier.size(16.dp)
                     )
-                    Text(
-                        text = place.rating,
-                        style = MaterialTheme.typography.body1,
-                        color = colorResource(id = R.color.secondary_text_color_dark),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                    PlaceText(  text = place.rating,modifier =Modifier.padding(horizontal = 16.dp) )
 
                 }
             }
