@@ -1,14 +1,12 @@
 package com.example.foursquareplaces.ui.searchplaces.viewmodel
 
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
 import com.example.foursquareplaces.domain.usecase.abs.SearchPlacesUseCase
 import com.example.foursquareplaces.utils.MyLocationManager
-
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -25,11 +23,9 @@ class SearchPlacesViewModel (
     fun getLastKnownLocation(): LiveData<Location?> {
         return locationManager.locationData
     }
-
     fun startLocationUpdates() {
         locationManager.startLocationUpdates()
     }
-
     fun stopLocationUpdates() {
         locationManager.stopLocationUpdates()
     }

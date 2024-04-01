@@ -2,4 +2,6 @@
     <string name="app_name">FoursquarePlaces</string>
     <string name="open">Open</string>
     <string name="closed">Cosed</string>
+    <string name="label_back">Back</string>
+
 </resources>

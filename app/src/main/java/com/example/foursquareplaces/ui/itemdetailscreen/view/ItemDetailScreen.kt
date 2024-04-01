@@ -1,11 +1,9 @@
 package com.example.foursquareplaces.ui.itemdetailscreen.view
-import androidx.compose.runtime.Composable
 
+import androidx.compose.runtime.Composable
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.remember
-
 import android.annotation.SuppressLint
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -47,19 +45,22 @@ import java.io.IOException
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
+import com.example.foursquareplaces.R
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
 import com.example.foursquareplaces.domain.uimodel.TipUI
+import com.example.foursquareplaces.ui.components.PlaceRoundImage
 import com.example.foursquareplaces.ui.itemdetailscreen.viewmodel.PlaceDetailsViewModel
 import com.example.foursquareplaces.utils.fixImageUrl
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ItemDetailScreen(viewModel: PlaceDetailsViewModel, name: String, onBackPressed: () -> Unit) {
+fun ItemDetailScreen(viewModel: PlaceDetailsViewModel, fsqId: String, onBackPressed: () -> Unit) {
     LaunchedEffect(Unit) {
-        viewModel.searchPlaces(name)
+        viewModel.searchPlaces(fsqId)
     }
     val place by viewModel.place.collectAsState(null)
     var isLoading by remember { mutableStateOf(true) }
@@ -69,94 +70,180 @@ fun ItemDetailScreen(viewModel: PlaceDetailsViewModel, name: String, onBackPress
             isLoading = loading
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(text = "Information")
-                },
+                title = { Text(text = stringResource(id = R.string.information_app)) },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
-                actions = {
-                    HeartButton()
-                },
-                backgroundColor = Color.White,
-                contentColor = Color.Black,
+                actions = { HeartButton() },
+                backgroundColor = colorResource(id = R.color.nav_bar_color),
+                contentColor = colorResource(id = R.color.nav_bar_title_color),
                 modifier = Modifier.fillMaxWidth()
             )
         },
         content = {
             if (isLoading) {
-                // Mostrar o loader enquanto os dados estão sendo carregados
                 CircularProgressIndicator(modifier = Modifier.fillMaxSize())
             } else {
-                // Mostrar o conteúdo da tela quando os dados estiverem disponíveis
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState()), // Adiciona scroll vertical
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Imagem arredondada
-                    place?.photos
-                        ?.firstOrNull { "${it.prefix}${it.suffix}".isNotEmpty() }
-                        ?.let { photo ->
-                            val photoUrl = "${photo.prefix}1024${photo.suffix}".fixImageUrl()
-                            GlideImage(url = photoUrl)
-                        }
-
-                    // Título do lugar
-                    Text(
-                        text = place?.name ?: "",
-                        style = MaterialTheme.typography.h5,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-
-                    // Label com informações das categorias
-                    place?.categories?.forEach { category ->
-                        Text(
-                            text = category.name,
-                            style = MaterialTheme.typography.body1,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-
-
-                    // Seção com informações adicionais
-                    Spacer(modifier = Modifier.height(16.dp)) // Espaçamento entre as seções
-                    AdditionalInfoSection(place = place)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-                    LazyRow(
-                        modifier = Modifier.padding(top = 16.dp).height(screenWidth).fillMaxWidth()
-                    ) {
-                        items(place?.photos ?: emptyList()) { photo ->
-                            val photoUrl = "${photo.prefix}1024${photo.suffix}".fixImageUrl()
-                            ImageGalleryItem(url = photoUrl)
-                        }
-                    }
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(screenWidth)
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        items(place?.tips ?: emptyList()) { tip ->
-                            CustomerReviewItem(tip = tip)
-                        }
-                    }
-                }
+                place?.let { it1 -> DetailContent(placeInfo = it1) }
             }
         }
-
-
     )
 }
+@Composable
+private fun DetailContent(placeInfo: PlaceUI) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .padding(16.dp)
+                .background(colorResource(id = R.color.background_color))
+                .align(Alignment.BottomStart)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                placeInfo.photos.firstOrNull()?.let { "${it.prefix}1024${it.suffix}".fixImageUrl() ?: "" }
+                    ?.let {
+                        PlaceRoundImage(url = it, Modifier.size(200.dp))
+                    }
+            }
 
+            Text(
+                text = placeInfo.name,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.h4,
+                color = colorResource(id = R.color.primary_text_color_dark),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+            placeInfo?.categories?.forEach { category ->
+                Text(
+                    text = category.name,
+                    style = MaterialTheme.typography.h5,
+                    color = colorResource(id = R.color.secondary_text_color_dark),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
+
+            Text(
+                text = placeInfo.location.address,
+                style = MaterialTheme.typography.h6,
+                color = colorResource(id = R.color.secondary_text_color_dark),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Text(
+                text = placeInfo.tel,
+                style = MaterialTheme.typography.h6,
+                color = colorResource(id = R.color.secondary_text_color_dark),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 2.dp)
+            ) {
+                Text(
+                    text = placeInfo.price,
+                    style = MaterialTheme.typography.h6,
+                    color = colorResource(id = R.color.secondary_text_color_dark),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                )
+
+                Text(
+                    text = if (placeInfo.hours?.openNow == true)stringResource(id = R.string.open) else stringResource(id = R.string.closed),
+                    style = MaterialTheme.typography.h6,
+                    color = colorResource(id = R.color.secondary_text_color_dark),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                )
+
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Rating",
+                    tint = colorResource(id = R.color.secondary_text_color_dark),
+                    modifier = Modifier.size(16.dp)
+                )
+                Text(
+                    text = placeInfo.rating,
+                    style = MaterialTheme.typography.h6,
+                    color = colorResource(id = R.color.secondary_text_color_dark),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.image_gallery) ,
+                style = MaterialTheme.typography.h5,
+                color = colorResource(id = R.color.primary_text_color_dark),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+            )
+            GalleryCarousel(images = placeInfo.photos.map { "${it.prefix}1024${it.suffix}".fixImageUrl() })
+            Text(
+                text = stringResource(id = R.string.customer_reviews),
+                style = MaterialTheme.typography.h5,
+                color = colorResource(id = R.color.primary_text_color_dark),
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+            )
+            placeInfo.tips?.let { CustomerReviewCarousel(it) }
+        }
+    }
+}
+
+@Composable
+private fun GalleryCarousel(images: List<String>) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    LazyRow(
+        modifier = Modifier
+            .padding(top = 16.dp)
+            .height(screenWidth)
+            .fillMaxWidth()
+    ) {
+        items(images ?: emptyList()) { photo ->
+            val photoUrl = photo
+            ImageGalleryItem(url = photoUrl)
+        }
+    }
+}
+
+@Composable
+private fun CustomerReviewCarousel(tips: List<TipUI>) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    LazyColumn(
+        modifier = Modifier
+            .height(screenWidth)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        items(tips) { tip ->
+            CustomerReviewItem(tip = tip)
+        }
+    }
+}
 @Composable
 fun HeartButton() {
     var isSelected by remember { mutableStateOf(false) }
@@ -173,7 +260,7 @@ fun HeartButton() {
     }
 }
 @Composable
-private fun GlideImage(url: String) {
+private fun GlideImage(url: String, modifier: Modifier) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
@@ -197,12 +284,7 @@ private fun GlideImage(url: String) {
     }
 
     Box(
-        modifier = Modifier
-            .padding(top = 16.dp)
-            .size(120.dp)
-            .clip(shape = RoundedCornerShape(100.dp)) // Bordas arredondadas
-            .background(Color.White)
-            .shadow(4.dp, shape = RoundedCornerShape(5.dp)) // Sombra
+        modifier = modifier
     ) {
         imageBitmap.value?.let { img ->
             Image(
@@ -240,17 +322,14 @@ private fun ImageGalleryItem(url: String) {
         }
     }
 
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val imageHeight = screenWidth // Altura igual à largura da tela
-
     Box(
         modifier = Modifier
             .padding(top = 16.dp)
-            .fillMaxWidth() // Ocupa a largura total da tela
-            .aspectRatio(1f) // Relação de aspecto 1:1 para formar um quadrado
-            .clip(shape = RoundedCornerShape(10.dp)) // Bordas arredondadas
-            .background(Color.White)
-            .shadow(4.dp, shape = RoundedCornerShape(5.dp)) // Sombra
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(colorResource(id = R.color.background_color))
+            .shadow(4.dp, shape = RoundedCornerShape(5.dp))
     ) {
         imageBitmap.value?.let { img ->
             Image(
@@ -262,16 +341,14 @@ private fun ImageGalleryItem(url: String) {
         }
     }
 }
-
-
 @Composable
 private fun CustomerReviewItem(tip: TipUI) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        elevation = 4.dp, // Elevação para criar a sombra
-        shape = RoundedCornerShape(8.dp) // Borda arredondada do card
+        elevation = 4.dp,
+        shape = RoundedCornerShape(8.dp)
     ) {
         Column(
             modifier = Modifier
@@ -289,106 +366,5 @@ private fun CustomerReviewItem(tip: TipUI) {
                 color = Color.Gray
             )
         }
-    }
-}
-
-
-@Composable
-private fun AdditionalInfoSection(place: PlaceUI?) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        // Faixa de preço
-        place?.price?.let { price ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text(text = "Faixa de Preço: ", fontWeight = FontWeight.Bold)
-                // Faixa de preço
-                Text(
-                    text = place.price,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
-        }
-
-        // Classificação
-        place?.rating?.let { it ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Rating",
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = place.rating,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
-        }
-
-        // Número de telefone
-        place?.tel?.let { tel ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text(text = "Número de Telefone: ", fontWeight = FontWeight.Bold)
-                Text(text = tel)
-            }
-        }
-
-        // Endereço
-        place?.location?.address?.let { address ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text(text = "Endereço: ", fontWeight = FontWeight.Bold)
-                Text(text = address)
-            }
-        }
-
-        // Disponibilidade
-        val availabilityText = if (place?.hours?.openNow == true) "Aberto" else "Fechado"
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            Text(text = "Disponibilidade: ", fontWeight = FontWeight.Bold)
-            Text(text = availabilityText)
-        }
-    }
-}
-@Composable
-private fun PriceRangeText(priceRange: Int?) {
-    val priceDescription = when (priceRange) {
-        1 -> "Cheap"
-        2 -> "Moderate"
-        3 -> "Expensive"
-        4 -> "Very Expensive"
-        else -> "Unknown"
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 8.dp)
-    ) {
-        Text(text = "Faixa de Preço: ", fontWeight = FontWeight.Bold)
-        Text(text = priceDescription)
     }
 }

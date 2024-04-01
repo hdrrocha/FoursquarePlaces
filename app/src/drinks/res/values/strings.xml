@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">FoursquareDrinkPlaces</string>
+    <string name="information_app">Coffee place details</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
+    <string name="image_gallery">Image gallery</string>
+    <string name="customer_reviews">Customer reviews</string>
+    <string name="cheap">Cheap</string>
+    <string name="moderate">Moderate</string>
+    <string name="expensive">Expensive</string>
+    <string name="very_expensive">Very Expensive</string>
+    <string name="rice_range">"Price Range</string>
+    <string name="order_by">"Order by</string>
 </resources>

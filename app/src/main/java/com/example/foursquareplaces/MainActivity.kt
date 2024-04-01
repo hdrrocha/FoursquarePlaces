@@ -16,10 +16,12 @@ import com.example.foursquareplaces.ui.itemdetailscreen.viewmodel.PlaceDetailsVi
 import com.example.foursquareplaces.ui.searchplaces.view.SearchPlacesView
 import com.example.foursquareplaces.ui.searchplaces.viewmodel.SearchPlacesViewModel
 import com.example.foursquareplaces.ui.theme.FoursquarePlacesTheme
+import com.example.foursquareplaces.utils.MyLocationManager
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var locationManager: MyLocationManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -36,19 +38,28 @@ class MainActivity : ComponentActivity() {
                             SearchPlacesView(searchPlacesViewModel, navController = navController)
                         }
                         composable(
-                            "item_detail_screen/{itemName}",
-                            arguments = listOf(navArgument("itemName") { type = NavType.StringType })
+                            "item_detail_screen/{fsqId}",
+                            arguments = listOf(navArgument("fsqId") { type = NavType.StringType })
                         ) { backStackEntry ->
-                            val itemName = backStackEntry.arguments?.getString("itemName")
-                            itemName?.let {
-                                ItemDetailScreen(viewModel = placeDetailsViewModel, name = it, onBackPressed = { navController.popBackStack() })
-
+                            val fsqId = backStackEntry.arguments?.getString("fsqId")
+                            fsqId?.let {
+                                ItemDetailScreen(viewModel = placeDetailsViewModel, fsqId = it, onBackPressed = { navController.popBackStack() })
                             }
                         }
                     }
-
                 }
             }
         }
     }
+    override fun onStart() {
+        super.onStart()
+        locationManager = MyLocationManager(this)
+        locationManager.startLocationUpdates()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        locationManager.stopLocationUpdates()
+
+    }
+
 }

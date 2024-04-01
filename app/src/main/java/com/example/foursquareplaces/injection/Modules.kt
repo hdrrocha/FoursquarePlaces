@@ -25,7 +25,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Modules {
-
     private val network = module {
         single {
             val loggingInterceptor = HttpLoggingInterceptor()
@@ -41,14 +40,12 @@ object Modules {
                 .build()
         }
     }
-
     private val api = module {
         single {
             val retrofit: Retrofit = get()
             retrofit.create(FoursquareApi::class.java)
         }
     }
-
     private val repository = module {
         single<SearchPlacesRepository> {
             SearchPlacesRepositoryImp(api = get())
@@ -57,7 +54,6 @@ object Modules {
             PlaceDetailsRepositoryImp(api = get())
         }
     }
-
     private val mapper = module {
         single<SearchPlacesMapper> {
             SearchPlacesMapperImp()
@@ -66,7 +62,6 @@ object Modules {
             PlaceDetailsMapperImp()
         }
     }
-
     private val useCase = module {
         single<SearchPlacesUseCase> {
             SearchPlacesUseCaseImp(
@@ -81,7 +76,6 @@ object Modules {
             )
         }
     }
-
     private val servicesManager = module {
         single { MyLocationManager(context = get()) }
 
@@ -98,10 +92,8 @@ object Modules {
                 useCase = get()
             )
         }
-
     }
-
-    var all = listOf(
+    val all = listOf(
         network,
         servicesManager,
         api,

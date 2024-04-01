@@ -33,7 +33,7 @@ class SearchPlacesMapperImp: SearchPlacesMapper {
                 open_now = place.open_now,
                 categories = emptyList(),
                 hours = null,
-                tel = null,
+                tel = "null",
                 tips = emptyList()
             )
         }

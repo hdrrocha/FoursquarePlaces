@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FFC107</color>
-    <color name="purple_700">#FF3700B3</color>
+    <color name="purple_200">#2196F3</color>
+    <color name="purple_500">#00BCD4</color>
+    <color name="purple_700">#FF5722</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary_color">#D74545</color>
 
-    <color name="primary_text_color_light">#000000</color>
-    <color name="primary_text_color_dark">#FFFFFF</color>
+    <color name="primary_text_color_light">#FFFFFF</color>
+    <color name="primary_text_color_dark">#000000</color>
 
-    <color name="secondary_text_color_light">#808080</color>
-    <color name="secondary_text_color_dark">#CCCCCC</color>
+    <color name="secondary_text_color_light">#CCCCCC</color>
+    <color name="secondary_text_color_dark">#808080</color>
 
-    <color name="nav_bar_color">#000000</color>
+    <color name="nav_bar_color">#FFFFFFFF</color>
 
-    <color name="nav_bar_title_color">#FFFFFFFF</color>
+    <color name="nav_bar_title_color">#000000</color>
 
-    <color name="background_color">#000000</color>
+    <color name="background_color">#FFFFFF</color>
+    <color name="background_card_color">#FFFFFF</color>
+    <color name="background_card_top_light">#E8FFF069</color>
+    <color name="background_card_top_mid">#E8F8EC7F</color>
+    <color name="background_card_top_dark">#6B6425</color>
+
+    <color name="background_button_dark">#E8917A1B</color>
+
+
 </resources>

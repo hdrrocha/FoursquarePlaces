@@ -1,7 +1,6 @@
 package com.example.foursquareplaces.ui.searchplaces.view
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
@@ -29,22 +28,13 @@ import androidx.navigation.NavController
 import com.example.foursquareplaces.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.foursquareplaces.domain.uimodel.PlaceUI
+import com.example.foursquareplaces.ui.components.PlaceRoundImage
 import com.example.foursquareplaces.ui.searchplaces.viewmodel.SearchPlacesViewModel
 import com.example.foursquareplaces.utils.fixImageUrl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.IOException
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -88,12 +78,14 @@ fun SearchPlacesView(viewModel: SearchPlacesViewModel, navController: NavControl
                     }
                 )
                 if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(50.dp).align(Alignment.CenterHorizontally))
+                    CircularProgressIndicator(modifier = Modifier
+                        .size(50.dp)
+                        .align(Alignment.CenterHorizontally))
                 } else {
                     LazyVerticalGrid(GridCells.Fixed(2)) {
                         items(placesList) { place ->
-                            ItemPlace(place = place) { itemName ->
-                                navController.navigate("item_detail_screen/$itemName")
+                            ItemPlace(place = place) { fsqId ->
+                                navController.navigate("item_detail_screen/$fsqId")
                             }
                         }
                     }
@@ -125,7 +117,7 @@ fun FilterMenu(
     onToggleStateChanged: (Boolean) -> Unit,
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("Valor") }
+    var selectedText by remember { mutableStateOf("Order by") }
     var isOpenNow by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
@@ -163,28 +155,28 @@ fun FilterMenu(
                 selectedText = "Cheap"
                 isMenuExpanded = false
             }) {
-                Text(text = "Cheap")
+                Text(text = stringResource(id = R.string.cheap))
             }
             DropdownMenuItem(onClick = {
                 onPriceOptionSelected("$$")
                 selectedText = "Moderate"
                 isMenuExpanded = false
             }) {
-                Text(text = "Moderate")
+                Text(text = stringResource(id = R.string.moderate))
             }
             DropdownMenuItem(onClick = {
                 onPriceOptionSelected("$$$")
                 selectedText = "Expensive"
                 isMenuExpanded = false
             }) {
-                Text(text = "Expensive")
+                Text(text = stringResource(id = R.string.expensive))
             }
             DropdownMenuItem(onClick = {
                 onPriceOptionSelected("$$$$")
                 selectedText = "Very Expensive"
                 isMenuExpanded = false
             }) {
-                Text(text = "Very Expensive")
+                Text(text = stringResource(id = R.string.very_expensive))
             }
         }
         Spacer(modifier = Modifier.width(8.dp))
@@ -235,7 +227,7 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
                     ?.firstOrNull { "${it.prefix}${it.suffix}".isNotEmpty() }
                     ?.let { photo ->
                         val photoUrl = "${photo.prefix}1024${photo.suffix}".fixImageUrl()
-                        ItemPlaceImage(url = photoUrl)
+                        PlaceRoundImage(url = photoUrl, Modifier.size(100.dp))
                     }
             }
             Spacer(modifier = Modifier.height(26.dp))
@@ -292,46 +284,6 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
 
                 }
             }
-        }
-    }
-}
-@Composable
-private fun ItemPlaceImage(url: String) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-    val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
-    LaunchedEffect(url) {
-        coroutineScope.launch {
-            try {
-                val bitmap = withContext(Dispatchers.IO) {
-                    Glide.with(context)
-                        .asBitmap()
-                        .load(url)
-                        .placeholder(R.drawable.error_image)
-                        .error(R.drawable.error_image)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .submit()
-                        .get()
-                }
-                imageBitmap.value = bitmap.asImageBitmap()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-    imageBitmap.value?.let { img ->
-        Surface(
-            shape = RoundedCornerShape(110.dp),
-            elevation = 4.dp,
-            border = null,
-            modifier = Modifier.size(100.dp)
-        ){
-            Image(
-                bitmap = img,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
         }
     }
 }

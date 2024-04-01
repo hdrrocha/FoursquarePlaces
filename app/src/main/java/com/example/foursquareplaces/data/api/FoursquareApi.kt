@@ -6,6 +6,7 @@ import com.example.foursquareplaces.data.model.SearchResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FoursquareApi {
@@ -43,9 +44,9 @@ interface FoursquareApi {
         "Accept: application/json",
         "Authorization: ${BuildConfig.AUTH_TOKEN}"
     )
-    @GET("places/search")
+    @GET("places/{fsq_id}")
     suspend fun placeDetails(
-        @Query("fsq_id") fsqId: String,
+        @Path("fsq_id") fsq_id: String,
         @Query("client_id") clientId: String = BuildConfig.CLIENT_ID,
         @Query("client_secret") clientSecret: String =  BuildConfig.CLIENT_SECRET,
         @Query("v") version: String = BuildConfig.VERSION_API,

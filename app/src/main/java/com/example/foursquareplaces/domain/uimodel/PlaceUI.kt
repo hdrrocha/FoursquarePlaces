@@ -11,6 +11,7 @@ data class PlaceUI(
     val open_now: Boolean,
     val categories: List<CategoryUI>,
     val hours: HoursUI?,
-    val tel: String?,
-    val tips: List<TipUI>,
-)
+    val tel: String,
+    val tips: List<TipUI>?,
+
+    )

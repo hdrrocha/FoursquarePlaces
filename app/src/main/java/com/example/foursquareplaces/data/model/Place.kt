@@ -11,6 +11,6 @@ data class Place(
     val open_now: Boolean,
     val categories: List<Category>,
     val hours: Hours,
-    val tel: String,
+    val tel: String?,
     val tips: List<Tip>
 )

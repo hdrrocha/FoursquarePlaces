@@ -45,7 +45,7 @@ class PlaceDetailsMapperImp: PlaceDetailsMapper {
     private fun mapHours(hours: Hours?): HoursUI? {
         return hours?.let {
             HoursUI(
-                display = hours.display,
+                display = it.display ?: "" ,
                 isLocalHoliday = hours.is_local_holiday,
                 openNow = hours.open_now
             )
@@ -53,8 +53,8 @@ class PlaceDetailsMapperImp: PlaceDetailsMapper {
     }
     private fun mapTip(tip: Tip): TipUI {
         return TipUI(
-            createdAt = tip.created_at,
-            text = tip.text
+            createdAt = tip?.created_at ?: "",
+            text = tip?.text?: ""
         )
     }
     private fun mapLocationUI(location: Location?): LocationUI {
@@ -85,11 +85,13 @@ class PlaceDetailsMapperImp: PlaceDetailsMapper {
                 price = formatPrice(place?.price ?: 0),
                 rating = place?.rating.toString() ?: "0.0",
                 open_now = place?.open_now ?: false,
-                categories = emptyList(),
-                hours = null,
-                tel = null,
-                tips = emptyList()
+                categories = place?.categories?.map { mapCategory(it) } ?: emptyList(),
+                hours = mapHours(place?.hours),
+                tel = place?.tel ?: ""  ,
+                tips = place?.tips?.map { mapTip(it) }
             )
         }
     }
+
+
 }
