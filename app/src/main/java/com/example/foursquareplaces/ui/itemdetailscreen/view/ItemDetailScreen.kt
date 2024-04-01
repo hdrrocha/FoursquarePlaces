@@ -183,16 +183,17 @@ private fun DetailContent(placeInfo: PlaceUI) {
                     PlaceText(  text =placeInfo.rating,modifier = Modifier)
                 }
             }
+            if(placeInfo.photos?.isNotEmpty() == true)
+                PlaceTextSubTitle(text = stringResource(id = R.string.image_gallery),modifier = Modifier
+                    .padding(horizontal = 4.dp))
+                PlaceDivider()
+                GalleryCarousel(images = placeInfo.photos.map { "${it.prefix}1024${it.suffix}".fixImageUrl() })
 
-            PlaceTextSubTitle(text = stringResource(id = R.string.image_gallery),modifier = Modifier
-                .padding(horizontal = 4.dp))
-            PlaceDivider()
-            GalleryCarousel(images = placeInfo.photos.map { "${it.prefix}1024${it.suffix}".fixImageUrl() })
-
-            PlaceTextSubTitle(text = stringResource(id = R.string.customer_reviews),modifier = Modifier
-                .padding(horizontal = 8.dp))
-            PlaceDivider()
-            placeInfo.tips?.let { CustomerReviewCarousel(it) }
+            if(placeInfo.tips?.isNotEmpty() == true)
+                PlaceTextSubTitle(text = stringResource(id = R.string.customer_reviews),modifier = Modifier
+                    .padding(horizontal = 8.dp))
+                PlaceDivider()
+                placeInfo.tips?.let { CustomerReviewCarousel(it) }
         }
     }
 }

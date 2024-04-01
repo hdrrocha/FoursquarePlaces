@@ -99,15 +99,30 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7") // Compose Navigation Library
     implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation("androidx.compose.ui:ui-util:1.1.0")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
     testImplementation("junit:junit:4.13.2") // JUnit Testing Framework for Java
+    testImplementation("org.mockito:mockito-core:3.11.2")
+    testImplementation("org.mockito:mockito-inline:3.12.4") 
     androidTestImplementation("androidx.test.ext:junit:1.1.5") // JUnit Extension for Android Instrumentation Testing
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1") // UI Testing Framework for Android
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00")) // Compose BOM for Instrumentation Testing
     androidTestImplementation("androidx.compose.ui:ui-test-junit4") // JUnit Tests for Compose UI
+    androidTestImplementation( "androidx.test:rules1.3.0") // JUnit Tests for Compose UI
+    androidTestImplementation( "androidx.test.ext:truth:1.2.0") // JUnit Tests for Compose UI
+    androidTestImplementation( "com.squareup.okhttp3:mockwebserver:4.1.0") // JUnit Tests for Compose UI
+
     debugImplementation("androidx.compose.ui:ui-tooling") // Compose Development Tools
     debugImplementation("androidx.compose.ui:ui-test-manifest") // Manifest for Compose Instrumentation Testing
     debugImplementation("androidx.compose.runtime:runtime-livedata:1.0.5") // LiveData for Compose
+
+//    androidTestImplementation "androidx.test.ext:junit:$versions.junit_x_ext"
+//    androidTestImplementation "androidx.test:rules:$versions.testx_rules"
+//
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+//    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+//    androidTestImplementation "androidx.test.ext:truth:$versions.truthVersion"
+//    androidTestImplementation 'androidx.test:rules:1.2.0'
 
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.12.0")
