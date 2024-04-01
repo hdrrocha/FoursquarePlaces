@@ -246,10 +246,11 @@ fun ItemPlace(place: PlaceUI, onItemClick: (String) -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(10.dp),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.Start
             ) {
+                Spacer(modifier = Modifier.height(4.dp))
                 PlateTextTitle(text = place.name,
                     modifier = Modifier
                     .padding(horizontal = 4.dp)
